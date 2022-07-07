@@ -58,18 +58,18 @@ endif()
 
 # Set these up as variables to make reading the generated file easier
 set(CMAKE_COMMAND "/usr/bin/cmake") # path
-set(source_file "/home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/median_filter.cu") # path
-set(NVCC_generated_dependency_file "/home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir//depth_cuda_generated_median_filter.cu.o.NVCC-depend") # path
-set(cmake_dependency_file "/home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir//depth_cuda_generated_median_filter.cu.o.depend") # path
+set(source_file "/home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/median_filter.cu") # path
+set(NVCC_generated_dependency_file "/home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir//depth_cuda_generated_median_filter.cu.o.NVCC-depend") # path
+set(cmake_dependency_file "/home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir//depth_cuda_generated_median_filter.cu.o.depend") # path
 set(CUDA_make2cmake "/usr/share/cmake-3.16/Modules/FindCUDA/make2cmake.cmake") # path
 set(CUDA_parse_cubin "/usr/share/cmake-3.16/Modules/FindCUDA/parse_cubin.cmake") # path
 set(build_cubin OFF) # bool
 set(CUDA_HOST_COMPILER "/usr/bin/cc") # path
 # We won't actually use these variables for now, but we need to set this, in
 # order to force this file to be run again if it changes.
-set(generated_file_path "/home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir//.") # path
-set(generated_file_internal "/home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir//./depth_cuda_generated_median_filter.cu.o") # path
-set(generated_cubin_file_internal "/home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir//./depth_cuda_generated_median_filter.cu.o.cubin.txt") # path
+set(generated_file_path "/home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir//.") # path
+set(generated_file_internal "/home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir//./depth_cuda_generated_median_filter.cu.o") # path
+set(generated_cubin_file_internal "/home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir//./depth_cuda_generated_median_filter.cu.o.cubin.txt") # path
 
 set(CUDA_NVCC_EXECUTABLE "/usr/local/cuda/bin/nvcc") # path
 set(CUDA_NVCC_FLAGS -O3;-lineinfo;-gencode=arch=compute_75,code=sm_75;-gencode=arch=compute_80,code=sm_80;-gencode=arch=compute_86,code=sm_86 ;; ) # list
@@ -79,7 +79,7 @@ set(CUDA_NVCC_FLAGS_MINSIZEREL  ; )
 set(CUDA_NVCC_FLAGS_RELEASE  ; )
 set(CUDA_NVCC_FLAGS_RELWITHDEBINFO  ; )
 set(nvcc_flags -m64;--std;c++11;-Ddepth_cuda_EXPORTS) # list
-set(CUDA_NVCC_INCLUDE_DIRS [==[/usr/local/cuda/include;/usr/include/python3.8;/home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/../3rd_party/pybind11/include;/usr/local/cuda/include]==]) # list (needs to be in lua quotes to address backslashes)
+set(CUDA_NVCC_INCLUDE_DIRS [==[/usr/local/cuda/include;/usr/include/python3.8;/home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/./3rd_party/pybind11/include;/usr/local/cuda/include]==]) # list (needs to be in lua quotes to address backslashes)
 string(REPLACE "\\" "/" CUDA_NVCC_INCLUDE_DIRS "${CUDA_NVCC_INCLUDE_DIRS}")
 set(CUDA_NVCC_COMPILE_DEFINITIONS [==[]==]) # list (needs to be in lua quotes see #16510 ).
 set(format_flag "-c") # string

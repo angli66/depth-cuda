@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/angli/Desktop/SuLab/sgm/cuda/depth_cuda
+CMAKE_SOURCE_DIR = /home/angli/Desktop/SuLab/sgm/cuda/depth-cuda
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build
+CMAKE_BINARY_DIR = /home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/depth_cuda.dir/depend.make
@@ -60,48 +60,48 @@ include CMakeFiles/depth_cuda.dir/flags.make
 CMakeFiles/depth_cuda.dir/depth_cuda_generated_depth_cuda.cu.o: CMakeFiles/depth_cuda.dir/depth_cuda_generated_depth_cuda.cu.o.depend
 CMakeFiles/depth_cuda.dir/depth_cuda_generated_depth_cuda.cu.o: CMakeFiles/depth_cuda.dir/depth_cuda_generated_depth_cuda.cu.o.cmake
 CMakeFiles/depth_cuda.dir/depth_cuda_generated_depth_cuda.cu.o: ../depth_cuda.cu
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building NVCC (Device) object CMakeFiles/depth_cuda.dir/depth_cuda_generated_depth_cuda.cu.o"
-	cd /home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir && /usr/bin/cmake -E make_directory /home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir//.
-	cd /home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir && /usr/bin/cmake -D verbose:BOOL=$(VERBOSE) -D build_configuration:STRING= -D generated_file:STRING=/home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir//./depth_cuda_generated_depth_cuda.cu.o -D generated_cubin_file:STRING=/home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir//./depth_cuda_generated_depth_cuda.cu.o.cubin.txt -P /home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir//depth_cuda_generated_depth_cuda.cu.o.cmake
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building NVCC (Device) object CMakeFiles/depth_cuda.dir/depth_cuda_generated_depth_cuda.cu.o"
+	cd /home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir && /usr/bin/cmake -E make_directory /home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir//.
+	cd /home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir && /usr/bin/cmake -D verbose:BOOL=$(VERBOSE) -D build_configuration:STRING= -D generated_file:STRING=/home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir//./depth_cuda_generated_depth_cuda.cu.o -D generated_cubin_file:STRING=/home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir//./depth_cuda_generated_depth_cuda.cu.o.cubin.txt -P /home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir//depth_cuda_generated_depth_cuda.cu.o.cmake
 
 CMakeFiles/depth_cuda.dir/depth_cuda_generated_median_filter.cu.o: CMakeFiles/depth_cuda.dir/depth_cuda_generated_median_filter.cu.o.depend
 CMakeFiles/depth_cuda.dir/depth_cuda_generated_median_filter.cu.o: CMakeFiles/depth_cuda.dir/depth_cuda_generated_median_filter.cu.o.cmake
 CMakeFiles/depth_cuda.dir/depth_cuda_generated_median_filter.cu.o: ../median_filter.cu
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building NVCC (Device) object CMakeFiles/depth_cuda.dir/depth_cuda_generated_median_filter.cu.o"
-	cd /home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir && /usr/bin/cmake -E make_directory /home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir//.
-	cd /home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir && /usr/bin/cmake -D verbose:BOOL=$(VERBOSE) -D build_configuration:STRING= -D generated_file:STRING=/home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir//./depth_cuda_generated_median_filter.cu.o -D generated_cubin_file:STRING=/home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir//./depth_cuda_generated_median_filter.cu.o.cubin.txt -P /home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir//depth_cuda_generated_median_filter.cu.o.cmake
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building NVCC (Device) object CMakeFiles/depth_cuda.dir/depth_cuda_generated_median_filter.cu.o"
+	cd /home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir && /usr/bin/cmake -E make_directory /home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir//.
+	cd /home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir && /usr/bin/cmake -D verbose:BOOL=$(VERBOSE) -D build_configuration:STRING= -D generated_file:STRING=/home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir//./depth_cuda_generated_median_filter.cu.o -D generated_cubin_file:STRING=/home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir//./depth_cuda_generated_median_filter.cu.o.cubin.txt -P /home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir//depth_cuda_generated_median_filter.cu.o.cmake
 
 CMakeFiles/depth_cuda.dir/depth_cuda_generated_hamming_cost.cu.o: CMakeFiles/depth_cuda.dir/depth_cuda_generated_hamming_cost.cu.o.depend
 CMakeFiles/depth_cuda.dir/depth_cuda_generated_hamming_cost.cu.o: CMakeFiles/depth_cuda.dir/depth_cuda_generated_hamming_cost.cu.o.cmake
 CMakeFiles/depth_cuda.dir/depth_cuda_generated_hamming_cost.cu.o: ../hamming_cost.cu
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building NVCC (Device) object CMakeFiles/depth_cuda.dir/depth_cuda_generated_hamming_cost.cu.o"
-	cd /home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir && /usr/bin/cmake -E make_directory /home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir//.
-	cd /home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir && /usr/bin/cmake -D verbose:BOOL=$(VERBOSE) -D build_configuration:STRING= -D generated_file:STRING=/home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir//./depth_cuda_generated_hamming_cost.cu.o -D generated_cubin_file:STRING=/home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir//./depth_cuda_generated_hamming_cost.cu.o.cubin.txt -P /home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir//depth_cuda_generated_hamming_cost.cu.o.cmake
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building NVCC (Device) object CMakeFiles/depth_cuda.dir/depth_cuda_generated_hamming_cost.cu.o"
+	cd /home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir && /usr/bin/cmake -E make_directory /home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir//.
+	cd /home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir && /usr/bin/cmake -D verbose:BOOL=$(VERBOSE) -D build_configuration:STRING= -D generated_file:STRING=/home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir//./depth_cuda_generated_hamming_cost.cu.o -D generated_cubin_file:STRING=/home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir//./depth_cuda_generated_hamming_cost.cu.o.cubin.txt -P /home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir//depth_cuda_generated_hamming_cost.cu.o.cmake
 
 CMakeFiles/depth_cuda.dir/depth_cuda_generated_disparity_method.cu.o: CMakeFiles/depth_cuda.dir/depth_cuda_generated_disparity_method.cu.o.depend
 CMakeFiles/depth_cuda.dir/depth_cuda_generated_disparity_method.cu.o: CMakeFiles/depth_cuda.dir/depth_cuda_generated_disparity_method.cu.o.cmake
 CMakeFiles/depth_cuda.dir/depth_cuda_generated_disparity_method.cu.o: ../disparity_method.cu
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building NVCC (Device) object CMakeFiles/depth_cuda.dir/depth_cuda_generated_disparity_method.cu.o"
-	cd /home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir && /usr/bin/cmake -E make_directory /home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir//.
-	cd /home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir && /usr/bin/cmake -D verbose:BOOL=$(VERBOSE) -D build_configuration:STRING= -D generated_file:STRING=/home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir//./depth_cuda_generated_disparity_method.cu.o -D generated_cubin_file:STRING=/home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir//./depth_cuda_generated_disparity_method.cu.o.cubin.txt -P /home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir//depth_cuda_generated_disparity_method.cu.o.cmake
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building NVCC (Device) object CMakeFiles/depth_cuda.dir/depth_cuda_generated_disparity_method.cu.o"
+	cd /home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir && /usr/bin/cmake -E make_directory /home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir//.
+	cd /home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir && /usr/bin/cmake -D verbose:BOOL=$(VERBOSE) -D build_configuration:STRING= -D generated_file:STRING=/home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir//./depth_cuda_generated_disparity_method.cu.o -D generated_cubin_file:STRING=/home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir//./depth_cuda_generated_disparity_method.cu.o.cubin.txt -P /home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir//depth_cuda_generated_disparity_method.cu.o.cmake
 
 CMakeFiles/depth_cuda.dir/depth_cuda_generated_costs.cu.o: CMakeFiles/depth_cuda.dir/depth_cuda_generated_costs.cu.o.depend
 CMakeFiles/depth_cuda.dir/depth_cuda_generated_costs.cu.o: CMakeFiles/depth_cuda.dir/depth_cuda_generated_costs.cu.o.cmake
 CMakeFiles/depth_cuda.dir/depth_cuda_generated_costs.cu.o: ../costs.cu
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building NVCC (Device) object CMakeFiles/depth_cuda.dir/depth_cuda_generated_costs.cu.o"
-	cd /home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir && /usr/bin/cmake -E make_directory /home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir//.
-	cd /home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir && /usr/bin/cmake -D verbose:BOOL=$(VERBOSE) -D build_configuration:STRING= -D generated_file:STRING=/home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir//./depth_cuda_generated_costs.cu.o -D generated_cubin_file:STRING=/home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir//./depth_cuda_generated_costs.cu.o.cubin.txt -P /home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir//depth_cuda_generated_costs.cu.o.cmake
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building NVCC (Device) object CMakeFiles/depth_cuda.dir/depth_cuda_generated_costs.cu.o"
+	cd /home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir && /usr/bin/cmake -E make_directory /home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir//.
+	cd /home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir && /usr/bin/cmake -D verbose:BOOL=$(VERBOSE) -D build_configuration:STRING= -D generated_file:STRING=/home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir//./depth_cuda_generated_costs.cu.o -D generated_cubin_file:STRING=/home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir//./depth_cuda_generated_costs.cu.o.cubin.txt -P /home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir//depth_cuda_generated_costs.cu.o.cmake
 
 # Object files for target depth_cuda
 depth_cuda_OBJECTS =
 
 # External object files for target depth_cuda
 depth_cuda_EXTERNAL_OBJECTS = \
-"/home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir/depth_cuda_generated_depth_cuda.cu.o" \
-"/home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir/depth_cuda_generated_median_filter.cu.o" \
-"/home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir/depth_cuda_generated_hamming_cost.cu.o" \
-"/home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir/depth_cuda_generated_disparity_method.cu.o" \
-"/home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir/depth_cuda_generated_costs.cu.o"
+"/home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir/depth_cuda_generated_depth_cuda.cu.o" \
+"/home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir/depth_cuda_generated_median_filter.cu.o" \
+"/home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir/depth_cuda_generated_hamming_cost.cu.o" \
+"/home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir/depth_cuda_generated_disparity_method.cu.o" \
+"/home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir/depth_cuda_generated_costs.cu.o"
 
 depth_cuda.so: CMakeFiles/depth_cuda.dir/depth_cuda_generated_depth_cuda.cu.o
 depth_cuda.so: CMakeFiles/depth_cuda.dir/depth_cuda_generated_median_filter.cu.o
@@ -113,7 +113,7 @@ depth_cuda.so: /usr/local/cuda/lib64/libcudart_static.a
 depth_cuda.so: /usr/lib/x86_64-linux-gnu/librt.so
 depth_cuda.so: /usr/lib/x86_64-linux-gnu/libpython3.8.so
 depth_cuda.so: CMakeFiles/depth_cuda.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX shared library depth_cuda.so"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX shared library depth_cuda.so"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/depth_cuda.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -130,6 +130,6 @@ CMakeFiles/depth_cuda.dir/depend: CMakeFiles/depth_cuda.dir/depth_cuda_generated
 CMakeFiles/depth_cuda.dir/depend: CMakeFiles/depth_cuda.dir/depth_cuda_generated_hamming_cost.cu.o
 CMakeFiles/depth_cuda.dir/depend: CMakeFiles/depth_cuda.dir/depth_cuda_generated_disparity_method.cu.o
 CMakeFiles/depth_cuda.dir/depend: CMakeFiles/depth_cuda.dir/depth_cuda_generated_costs.cu.o
-	cd /home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/angli/Desktop/SuLab/sgm/cuda/depth_cuda /home/angli/Desktop/SuLab/sgm/cuda/depth_cuda /home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build /home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build /home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles/depth_cuda.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/angli/Desktop/SuLab/sgm/cuda/depth-cuda /home/angli/Desktop/SuLab/sgm/cuda/depth-cuda /home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build /home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build /home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles/depth_cuda.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/depth_cuda.dir/depend
 

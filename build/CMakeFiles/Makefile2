@@ -44,10 +44,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/angli/Desktop/SuLab/sgm/cuda/depth_cuda
+CMAKE_SOURCE_DIR = /home/angli/Desktop/SuLab/sgm/cuda/depth-cuda
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build
+CMAKE_BINARY_DIR = /home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build
 
 #=============================================================================
 # Directory level rules for the build root directory
@@ -74,14 +74,14 @@ clean: CMakeFiles/depth_cuda.dir/clean
 CMakeFiles/depth_cuda.dir/all:
 	$(MAKE) -f CMakeFiles/depth_cuda.dir/build.make CMakeFiles/depth_cuda.dir/depend
 	$(MAKE) -f CMakeFiles/depth_cuda.dir/build.make CMakeFiles/depth_cuda.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles --progress-num=1,2,3,4,5,6 "Built target depth_cuda"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles --progress-num=1,2,3,4,5,6 "Built target depth_cuda"
 .PHONY : CMakeFiles/depth_cuda.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/depth_cuda.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles 6
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles 6
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/depth_cuda.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/angli/Desktop/SuLab/sgm/cuda/depth_cuda/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/angli/Desktop/SuLab/sgm/cuda/depth-cuda/build/CMakeFiles 0
 .PHONY : CMakeFiles/depth_cuda.dir/rule
 
 # Convenience name for target.
