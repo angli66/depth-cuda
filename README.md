@@ -7,5 +7,5 @@ For now the acceleration for stereo matching (rectified images -> disparity map)
 
 `finish()`: this function should be called when GPU will not be used anymore to free resources.
 
-Run `test.py` to evaluate the run time. The test input is in folder `test_images`. After running test.py the calculated disparity map `disp.png` will be generated in the root folder. Tested on RTX 3060, 100 calls of `compute_disparity(left, right)` takes about 0.45 second. The generated disparity map is as follow:
+Run `test.py` to evaluate the run time. The test input is in folder `test_images`， which are two 1280x720 images. After running test.py the calculated disparity map `disp.png` will be generated in the root folder. Tested on RTX 3060, 100 calls of `compute_disparity(left, right)` takes about 0.45 second. The generated disparity map is as follow:
 ![disp](test_images/example_result.png)
