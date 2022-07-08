@@ -2,7 +2,7 @@
 
 mkdir build
 cd build
-cmake ..
+cmake ../src
 make
 cp engine.so ../dpcuda
 cd ..
