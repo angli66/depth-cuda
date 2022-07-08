@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.6)
-project(depth_cuda)
+project(engine)
 
 find_package(CUDA REQUIRED)
 find_package(PythonInterp 3.6 REQUIRED)
@@ -24,14 +24,14 @@ link_directories(
   /usr/local/cuda/lib64
 )
 
-cuda_add_library(depth_cuda SHARED
-  depth_cuda.cu median_filter.cu hamming_cost.cu disparity_method.cu costs.cu
+cuda_add_library(engine SHARED
+  engine.cu costs.cu hamming_cost.cu median_filter.cu depth_method.cu
 )
 
-target_link_libraries(depth_cuda
+target_link_libraries(engine
   ${OpenCV_LIBS}
   ${PYTHON_LIBRARIES}
   cudart
 )
 
-set_target_properties(depth_cuda PROPERTIES PREFIX "")
+set_target_properties(engine PROPERTIES PREFIX "")

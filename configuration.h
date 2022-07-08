@@ -16,6 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with sgm.  If not, see <http://www.gnu.org/licenses/>.
 
+    Modified by Ang Li
 **/
 
 #ifndef CONFIGURATION_H_

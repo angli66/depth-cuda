@@ -4,4 +4,6 @@ mkdir build
 cd build
 cmake ..
 make
-touch __init__.py
+cp engine.so ../dpcuda
+cd ..
+rm -rf build
