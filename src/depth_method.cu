@@ -31,7 +31,6 @@ static uint8_t *d_cost;
 static uint8_t *d_disparity;
 static uint8_t *d_disparity_filtered_uchar;
 static uint8_t *h_disparity;
-static uint16_t *d_S;
 static uint8_t *d_L0;
 static uint8_t *d_L1;
 static uint8_t *d_L2;
@@ -60,10 +59,7 @@ void init_depth_method(const uint8_t _p1, const uint8_t _p2, uint32_t _cols, uin
 Mat2d<uint8_t> compute_depth_method(Mat2d<uint8_t> left, Mat2d<uint8_t> right) {
 	if (cols != left.cols() || rows != left.rows()) { throw std::runtime_error("input image size different from initiated"); }
 	if(first_alloc) {
-		if(memory_occupied) {
-			std::cout << "im inside";
-			free_memory();
-		}
+		if(memory_occupied) { free_memory(); }
 		first_alloc = false;
 		size = rows*cols;
 		size_cube_l = size*MAX_DISPARITY;
@@ -78,7 +74,6 @@ Mat2d<uint8_t> compute_depth_method(Mat2d<uint8_t> left, Mat2d<uint8_t> right) {
 
 		CUDA_CHECK_RETURN(cudaMalloc((void **)&d_im1, sizeof(uint8_t)*size));
 
-		CUDA_CHECK_RETURN(cudaMalloc((void **)&d_S, sizeof(uint16_t)*size_cube_l));
 		CUDA_CHECK_RETURN(cudaMalloc((void **)&d_L0, sizeof(uint8_t)*size_cube_l));
 		CUDA_CHECK_RETURN(cudaMalloc((void **)&d_L1, sizeof(uint8_t)*size_cube_l));
 		CUDA_CHECK_RETURN(cudaMalloc((void **)&d_L2, sizeof(uint8_t)*size_cube_l));
