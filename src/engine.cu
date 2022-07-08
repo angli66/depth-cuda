@@ -22,7 +22,7 @@ py::array_t<T> Mat2d2ndarray(Mat2d<T> arr) {
 }
 
 void init(uint32_t img_h, uint32_t img_w) {
-    init_depth_method(7, 86, img_w, img_h);
+    init_depth_method(10, 120, img_w, img_h);
     initiated = true;
 }
 
@@ -42,12 +42,8 @@ py::array_t<uint8_t> compute(py::array_t<uint8_t> left_ndarray, py::array_t<uint
     return depth_ndarray;
 }
 
-void finish() {
-    finish_depth_method();
-}
-
 PYBIND11_MODULE(engine, m) {
     m.def("init", &init);
     m.def("compute", &compute, py::return_value_policy::take_ownership);
-    m.def("finish", &finish);
+    m.def("close", &finish_depth_method);
 }
