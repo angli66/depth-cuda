@@ -47,7 +47,7 @@ private:
     T *m_data;
 };
 
-void init_depth_method(const uint8_t _p1, const uint8_t _p2);
+void init_depth_method(const uint8_t _p1, const uint8_t _p2, uint32_t _cols, uint32_t _rows);
 Mat2d<uint8_t> compute_depth_method(Mat2d<uint8_t> left, Mat2d<uint8_t> right);
 void finish_depth_method();
 static void free_memory();

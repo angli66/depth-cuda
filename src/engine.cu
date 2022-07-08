@@ -21,8 +21,8 @@ py::array_t<T> Mat2d2ndarray(Mat2d<T> arr) {
     return new_arr;
 }
 
-void init() {
-    init_depth_method(10, 120);
+void init(uint32_t img_h, uint32_t img_w) {
+    init_depth_method(7, 86, img_w, img_h);
     initiated = true;
 }
 

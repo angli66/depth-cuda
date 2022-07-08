@@ -43,8 +43,9 @@ static uint8_t *d_L7;
 static uint8_t p1, p2;
 static bool first_alloc;
 static uint32_t cols, rows, size, size_cube_l;
+static bool memory_occupied;
 
-void init_depth_method(const uint8_t _p1, const uint8_t _p2) {
+void init_depth_method(const uint8_t _p1, const uint8_t _p2, uint32_t _cols, uint32_t _rows) {
 	// Create streams
 	CUDA_CHECK_RETURN(cudaStreamCreate(&stream1));
 	CUDA_CHECK_RETURN(cudaStreamCreate(&stream2));
@@ -52,18 +53,18 @@ void init_depth_method(const uint8_t _p1, const uint8_t _p2) {
 	first_alloc = true;
 	p1 = _p1;
 	p2 = _p2;
-    rows = 0;
-    cols = 0;
+	cols = _cols;
+    rows = _rows;
 }
 
 Mat2d<uint8_t> compute_depth_method(Mat2d<uint8_t> left, Mat2d<uint8_t> right) {
-	if(cols != left.cols() || rows != left.rows()) {
-		if(!first_alloc) {
+	if (cols != left.cols() || rows != left.rows()) { throw std::runtime_error("input image size different from initiated"); }
+	if(first_alloc) {
+		if(memory_occupied) {
+			std::cout << "im inside";
 			free_memory();
 		}
 		first_alloc = false;
-		cols = left.cols();
-		rows = left.rows();
 		size = rows*cols;
 		size_cube_l = size*MAX_DISPARITY;
 		CUDA_CHECK_RETURN(cudaMalloc((void **)&d_transform0, sizeof(cost_t)*size));
@@ -91,6 +92,8 @@ Mat2d<uint8_t> compute_depth_method(Mat2d<uint8_t> left, Mat2d<uint8_t> right) {
 
 		CUDA_CHECK_RETURN(cudaMalloc((void **)&d_disparity, sizeof(uint8_t)*size));
 		CUDA_CHECK_RETURN(cudaMalloc((void **)&d_disparity_filtered_uchar, sizeof(uint8_t)*size));
+
+		memory_occupied = true;
 	}
 	h_disparity = new uint8_t[size]; // Reset pointer to avoid changing previous result since pybind takes this pointer directly
 
@@ -211,6 +214,7 @@ static void free_memory() {
 	CUDA_CHECK_RETURN(cudaFree(d_disparity));
 	CUDA_CHECK_RETURN(cudaFree(d_disparity_filtered_uchar));
 	CUDA_CHECK_RETURN(cudaFree(d_cost));
+	memory_occupied = false;
 }
 
 void finish_depth_method() {
