@@ -20,7 +20,9 @@ class DepthEngine:
         distCoeffs1=dist_l, distCoeffs2=dist_r
         )
 
-        self._rectified = rectified
+        self._rectified = rectified # whether the input images are already rectified
+        self._f_len = np.abs(q[2][3]) # focal length of the left camera
+        self._b_len = 1.0 / np.abs(q[3][2]) # baseline length
         self._q = q
         self._map1 = cv2.initUndistortRectifyMap(k_l, dist_l, r1, p1, (img_w, img_h), cv2.CV_32F)
         self._map2 = cv2.initUndistortRectifyMap(k_r, dist_r, r2, p2, (img_w, img_h), cv2.CV_32F)
@@ -39,21 +41,39 @@ class DepthEngine:
 
         disp = dpcuda.engine.compute(img_l, img_r)
 
-        # disp to depth test code
-        mask = disp >= 1
-        _3d_image = cv2.reprojectImageTo3D(disp, self._q)
-        depth = _3d_image[..., 2]
-        depth = _3d_image[..., 2]
-        depth[~mask] = 0
-        depth[np.isinf(depth)] = 0
-        depth[np.isnan(depth)] = 0
-        max_depth = 10.0
-        min_depth = 0.2
-        depth[depth > max_depth] = 0
-        depth[depth < min_depth] = 0
-        _3d_image[..., 2] = depth
+        # import time
+        # start = time.process_time()
+        # depth_test = self._f_len*self._b_len / disp
+        # print("here!!", time.process_time() - start)
+
+        # print(np.min(depth_test))
+
+        # # disp to depth reference code
+        # import time
+        # mask = disp >= 1
+        # start = time.process_time()
+        # _3d_image = cv2.reprojectImageTo3D(disp, self._q)
+        # print("runtime", time.process_time() - start)
+        # depth = _3d_image[..., 2]
+        
+
+        # depth_test[np.isnan(depth)] = 0
+        # depth_test[np.isinf(depth)] = 0
+        # depth[np.isnan(depth)] = 0
+        # depth[np.isinf(depth)] = 0
+        # print("haha", np.max(depth_test-depth))
+
+        # depth[~mask] = 0
+        # depth[np.isnan(depth)] = 0
+        # depth[np.isinf(depth)] = 0
+        # depth[depth < 0] = 0
+        # max_depth = 10.0
+        # min_depth = 0.2
+        # depth[depth > max_depth] = 0
+        # depth[depth < min_depth] = 0
 
         # import open3d as o3d
+        # _3d_image[..., 2] = depth
         # points = _3d_image.reshape(-1, 3)
         # valid_flag = mask.reshape(-1)
         # valid_points = []
@@ -64,7 +84,7 @@ class DepthEngine:
         # pointcloud = o3d.geometry.PointCloud(points=valid_points)
         # o3d.visualization.draw_geometries([pointcloud])
 
-        return depth
+        return disp
     
     def close(self):
         """

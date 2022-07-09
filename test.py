@@ -37,6 +37,6 @@ print("Runtime for 100 calls of compute():", time.process_time() - start, "secon
 depthEngine.close()
 
 cv2.imwrite("disp.png", depth)
-import matplotlib.pyplot as plt
-plt.imshow(depth)
-plt.show()
+# import matplotlib.pyplot as plt
+# plt.imshow(depth)
+# plt.show()
