@@ -1,5 +1,6 @@
 from dpcuda import DepthEngine
 import numpy as np
+import matplotlib.pyplot as plt
 import cv2
 import time
 
@@ -27,16 +28,14 @@ l2r = np.array([
 ])
 r2l = np.linalg.inv(l2r)
 
-depthEngine = DepthEngine(img_h, img_w, k_l, k_r, r2l, rectified=True)
+depthEngine = DepthEngine(img_h, img_w, k_l, k_r, r2l, min_depth=0.2, max_depth=2.0, rectified=False)
 
 start = time.process_time()
-for i in range(1): #100
+for i in range(100):
     depth = depthEngine.compute(left, right)
 print("Runtime for 100 calls of compute():", time.process_time() - start, "second")
 
 depthEngine.close()
 
-cv2.imwrite("disp.png", depth)
-# import matplotlib.pyplot as plt
-# plt.imshow(depth)
-# plt.show()
+plt.imshow(depth)
+plt.show()

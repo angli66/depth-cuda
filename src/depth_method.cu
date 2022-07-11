@@ -30,7 +30,8 @@ static cost_t *d_transform1;
 static uint8_t *d_cost;
 static uint8_t *d_disparity;
 static uint8_t *d_disparity_filtered_uchar;
-static uint8_t *h_disparity;
+static float *d_depth;
+static float *h_depth;
 static uint8_t *d_L0;
 static uint8_t *d_L1;
 static uint8_t *d_L2;
@@ -42,9 +43,11 @@ static uint8_t *d_L7;
 static uint8_t p1, p2;
 static bool first_alloc;
 static uint32_t cols, rows, size, size_cube_l;
+static float focalLen, baselineLen, minDepth, maxDepth;
 static bool memory_occupied;
 
-void init_depth_method(const uint8_t _p1, const uint8_t _p2, uint32_t _cols, uint32_t _rows) {
+void init_depth_method(const uint8_t _p1, const uint8_t _p2, uint32_t _cols, uint32_t _rows,
+						float _focalLen, float _baselineLen, float _minDepth, float _maxDepth) {
 	// Create streams
 	CUDA_CHECK_RETURN(cudaStreamCreate(&stream1));
 	CUDA_CHECK_RETURN(cudaStreamCreate(&stream2));
@@ -54,9 +57,13 @@ void init_depth_method(const uint8_t _p1, const uint8_t _p2, uint32_t _cols, uin
 	p2 = _p2;
 	cols = _cols;
     rows = _rows;
+	focalLen = _focalLen;
+	baselineLen = _baselineLen;
+	minDepth = _minDepth;
+	maxDepth = _maxDepth;
 }
 
-Mat2d<uint8_t> compute_depth_method(Mat2d<uint8_t> left, Mat2d<uint8_t> right) {
+Mat2d<float> compute_depth_method(Mat2d<uint8_t> left, Mat2d<uint8_t> right) {
 	if (cols != left.cols() || rows != left.rows()) { throw std::runtime_error("input image size different from initiated"); }
 	if(first_alloc) {
 		if(memory_occupied) { free_memory(); }
@@ -87,10 +94,11 @@ Mat2d<uint8_t> compute_depth_method(Mat2d<uint8_t> left, Mat2d<uint8_t> right) {
 
 		CUDA_CHECK_RETURN(cudaMalloc((void **)&d_disparity, sizeof(uint8_t)*size));
 		CUDA_CHECK_RETURN(cudaMalloc((void **)&d_disparity_filtered_uchar, sizeof(uint8_t)*size));
+		CUDA_CHECK_RETURN(cudaMalloc((void **)&d_depth, sizeof(float)*size));
 
 		memory_occupied = true;
 	}
-	h_disparity = new uint8_t[size]; // Reset pointer to avoid changing previous result since pybind takes this pointer directly
+	h_depth = new float[size]; // Reset pointer to avoid changing previous result since pybind takes this pointer directly
 
 	CUDA_CHECK_RETURN(cudaMemcpyAsync(d_im0, left.data(), sizeof(uint8_t)*size, cudaMemcpyHostToDevice, stream1));
 	CUDA_CHECK_RETURN(cudaMemcpyAsync(d_im1, right.data(), sizeof(uint8_t)*size, cudaMemcpyHostToDevice, stream1));
@@ -185,10 +193,18 @@ Mat2d<uint8_t> compute_depth_method(Mat2d<uint8_t> left, Mat2d<uint8_t> right) {
 
 	CUDA_CHECK_RETURN(cudaDeviceSynchronize());
 
-	CUDA_CHECK_RETURN(cudaMemcpy(h_disparity, d_disparity_filtered_uchar, sizeof(uint8_t)*size, cudaMemcpyDeviceToHost));
+	// Disparity to depth conversion
+	dim3 bs2;
+	bs2.x = 32*32;
 
-	Mat2d<uint8_t> disparity(rows, cols, h_disparity);
-	return disparity;
+	dim3 gs2;
+	gs2.x = (size+bs2.x-1) / bs2.x;
+
+	disp2Depth<<<gs2, bs2, 0, stream1>>>(d_disparity_filtered_uchar, d_depth, focalLen, baselineLen, minDepth, maxDepth);
+	CUDA_CHECK_RETURN(cudaMemcpy(h_depth, d_depth, sizeof(float)*size, cudaMemcpyDeviceToHost));
+
+	Mat2d<float> depth(rows, cols, h_depth);
+	return depth;
 }
 
 static void free_memory() {

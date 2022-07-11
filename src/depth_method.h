@@ -30,6 +30,7 @@
 #include "hamming_cost.h"
 #include "median_filter.h"
 #include "cost_aggregation.h"
+#include "camera.h"
 
 template <class T>
 class Mat2d {
@@ -47,8 +48,9 @@ private:
     T *m_data;
 };
 
-void init_depth_method(const uint8_t _p1, const uint8_t _p2, uint32_t _cols, uint32_t _rows);
-Mat2d<uint8_t> compute_depth_method(Mat2d<uint8_t> left, Mat2d<uint8_t> right);
+void init_depth_method(const uint8_t _p1, const uint8_t _p2, uint32_t _cols, uint32_t _rows,
+                        float _focalLen, float _baselineLen, float _minDepth, float _maxDepth);
+Mat2d<float> compute_depth_method(Mat2d<uint8_t> left, Mat2d<uint8_t> right);
 void finish_depth_method();
 static void free_memory();
 
