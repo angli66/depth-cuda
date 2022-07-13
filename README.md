@@ -20,12 +20,12 @@ To build the code, run `build.sh` under root directory. The default settings onl
     -gencode=arch=compute_70,code=sm_70
 into `CmakeLists.txt`. After building, the `dpcuda` folder can be imported as a python package.
 
-## Document
+## Documentation
 ### `dpcuda.DepthEngine(img_h, img_w, k_l, k_r, r2l, min_depth, max_depth, dist_l=None, dist_r=None, rectified=False)`  
 Initiate the `DepthEngine` class.
 
-`img_h`: Image height  
-`img_w`: Image width  
+`img_h`: Image height, greater than 32  
+`img_w`: Image width, greater than 32  
 `k_l`: Left intrinsic matrix  
 `k_r`: Right intrinsic matrix  
 `r2l`: Extrinsic matrix (right to left)  
