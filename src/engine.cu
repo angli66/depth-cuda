@@ -26,13 +26,13 @@ py::array_t<T> Mat2d2ndarray(Mat2d<T> arr) {
 }
 
 void init(uint32_t img_h, uint32_t img_w, float focalLen, float baselineLen, float minDepth, float maxDepth,
-            py::array_t<float> map_lx, py::array_t<float> map_ly, py::array_t<float> map_rx, py::array_t<float> map_ry,
-            bool rectified) {
+            py::array_t<float> map_lx, py::array_t<float> map_ly, py::array_t<float> map_rx, py::array_t<float> map_ry, bool rectified,
+            uint32_t p1, uint32_t p2) {
     Mat2d<float> mapLx = ndarray2Mat2d<float>(map_lx);
     Mat2d<float> mapLy = ndarray2Mat2d<float>(map_ly);
     Mat2d<float> mapRx = ndarray2Mat2d<float>(map_rx);
     Mat2d<float> mapRy = ndarray2Mat2d<float>(map_ry);
-    init_depth_method(10, 120, img_w, img_h,
+    init_depth_method(p1, p2, img_w, img_h,
                         focalLen, baselineLen, minDepth, maxDepth,
                         mapLx, mapLy, mapRx, mapRy,
                         rectified);
