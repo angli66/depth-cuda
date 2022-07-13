@@ -5,7 +5,7 @@ This is a gpu-accelerated version of depth map calculation from a pair of image 
 The image rectification part relies on opencv. Use
 
     pip install opencv-contrib-python
-to install the dependencies. For now, the rectification part is done on CPU. GPU acceleration of rectification is still to be tested.
+to install the dependencies. OpenCV is used to pre-calculate the inverse map, and the remapping process is accelerated with GPU in runtime.
 
 The stereo matching part implements GPU accelerated Semi-Global Matching, referencing to this paper: https://arxiv.org/pdf/1610.04121.pdf, and its corresponding code https://github.com/dhernandez0/sgm.
 
@@ -52,6 +52,6 @@ Run `test.py` to evaluate the runtime and result. The input is in folder `test_i
 ### Right Image
 ![right](test_images/right.png)
 
-Tested on RTX 3060, 100 calls of `dpcuda.DepthEngine.compute(img_l, img_r)` takes ~0.55 second without rectification. With CPU rectification, the runtime increases to ~3.35 second for 100 calls. The generated depth map is as follow:
+Tested on RTX 3060, 100 calls of `dpcuda.DepthEngine.compute(img_l, img_r)` takes ~0.57 second witt rectification. The generated depth map is as follow:
 
-![depth](test_images/example_result.png)
+![depth](test_images/result.png)
