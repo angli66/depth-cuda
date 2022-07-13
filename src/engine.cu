@@ -25,8 +25,17 @@ py::array_t<T> Mat2d2ndarray(Mat2d<T> arr) {
     return new_arr;
 }
 
-void init(uint32_t img_h, uint32_t img_w, float focalLen, float baselineLen, float minDepth, float maxDepth) {
-    init_depth_method(10, 120, img_w, img_h, focalLen, baselineLen, minDepth, maxDepth);
+void init(uint32_t img_h, uint32_t img_w, float focalLen, float baselineLen, float minDepth, float maxDepth,
+            py::array_t<float> map_lx, py::array_t<float> map_ly, py::array_t<float> map_rx, py::array_t<float> map_ry,
+            bool rectified) {
+    Mat2d<float> mapLx = ndarray2Mat2d<float>(map_lx);
+    Mat2d<float> mapLy = ndarray2Mat2d<float>(map_ly);
+    Mat2d<float> mapRx = ndarray2Mat2d<float>(map_rx);
+    Mat2d<float> mapRy = ndarray2Mat2d<float>(map_ry);
+    init_depth_method(10, 120, img_w, img_h,
+                        focalLen, baselineLen, minDepth, maxDepth,
+                        mapLx, mapLy, mapRx, mapRy,
+                        rectified);
     initiated = true;
 }
 
@@ -46,8 +55,17 @@ py::array_t<float> compute(py::array_t<uint8_t> left_ndarray, py::array_t<uint8_
     return depth_ndarray;
 }
 
+void finish() {
+    if (!initiated) {
+        throw std::runtime_error("Can't close when the engine is not initiated");
+    }
+
+    finish_depth_method();
+    initiated = false;
+}
+
 PYBIND11_MODULE(engine, m) {
     m.def("init", &init);
     m.def("compute", &compute, py::return_value_policy::take_ownership);
-    m.def("close", &finish_depth_method);
+    m.def("close", &finish);
 }

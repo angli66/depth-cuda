@@ -22,7 +22,9 @@
 
 #include "depth_method.h"
 
-static cudaStream_t stream1, stream2, stream3;
+static cudaStream_t stream1, stream2, stream3, stream4;
+static uint8_t *d_rawim0;
+static uint8_t *d_rawim1;
 static uint8_t *d_im0;
 static uint8_t *d_im1;
 static cost_t *d_transform0;
@@ -41,18 +43,27 @@ static uint8_t *d_L5;
 static uint8_t *d_L6;
 static uint8_t *d_L7;
 static uint8_t p1, p2;
-static bool first_alloc;
-static uint32_t cols, rows, size, size_cube_l;
-static float focalLen, baselineLen, minDepth, maxDepth;
 static bool memory_occupied;
+static uint32_t cols, rows, size, size_cube_l;
+static bool rectified;
+static float focalLen, baselineLen, minDepth, maxDepth;
+static float *d_mapLx;
+static float *d_mapLy;
+static float *d_mapRx;
+static float *d_mapRy;
 
 void init_depth_method(const uint8_t _p1, const uint8_t _p2, uint32_t _cols, uint32_t _rows,
-						float _focalLen, float _baselineLen, float _minDepth, float _maxDepth) {
-	// Create streams
+						float _focalLen, float _baselineLen, float _minDepth, float _maxDepth,
+						Mat2d<float> mapLx, Mat2d<float> mapLy, Mat2d<float> mapRx, Mat2d<float> mapRy,
+						bool _rectified) {
+	// Create streams and free memory if necessary
 	CUDA_CHECK_RETURN(cudaStreamCreate(&stream1));
 	CUDA_CHECK_RETURN(cudaStreamCreate(&stream2));
 	CUDA_CHECK_RETURN(cudaStreamCreate(&stream3));
-	first_alloc = true;
+	CUDA_CHECK_RETURN(cudaStreamCreate(&stream4));
+	if(memory_occupied) { free_memory(); }
+
+	// Intialize global variables
 	p1 = _p1;
 	p2 = _p2;
 	cols = _cols;
@@ -61,57 +72,74 @@ void init_depth_method(const uint8_t _p1, const uint8_t _p2, uint32_t _cols, uin
 	baselineLen = _baselineLen;
 	minDepth = _minDepth;
 	maxDepth = _maxDepth;
+	rectified = _rectified;
+
+	size = rows*cols;
+	size_cube_l = size*MAX_DISPARITY;
+	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_transform0, sizeof(cost_t)*size));
+	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_transform1, sizeof(cost_t)*size));
+	int size_cube = size*MAX_DISPARITY;
+	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_cost, sizeof(uint8_t)*size_cube));
+	if (!rectified) {
+		CUDA_CHECK_RETURN(cudaMalloc((void **)&d_rawim0, sizeof(uint8_t)*size));
+		CUDA_CHECK_RETURN(cudaMalloc((void **)&d_rawim1, sizeof(uint8_t)*size));
+	}
+	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_im0, sizeof(uint8_t)*size));
+	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_im1, sizeof(uint8_t)*size));
+	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_L0, sizeof(uint8_t)*size_cube_l));
+	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_L1, sizeof(uint8_t)*size_cube_l));
+	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_L2, sizeof(uint8_t)*size_cube_l));
+	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_L3, sizeof(uint8_t)*size_cube_l));
+#if PATH_AGGREGATION == 8
+	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_L4, sizeof(uint8_t)*size_cube_l));
+	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_L5, sizeof(uint8_t)*size_cube_l));
+	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_L6, sizeof(uint8_t)*size_cube_l));
+	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_L7, sizeof(uint8_t)*size_cube_l));
+#endif
+	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_disparity, sizeof(uint8_t)*size));
+	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_disparity_filtered_uchar, sizeof(uint8_t)*size));
+	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_depth, sizeof(float)*size));
+	memory_occupied = true;
+
+	// Allocate inverse maps on GPU
+	size = rows*cols;
+	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_mapLx, sizeof(float)*size));
+	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_mapLy, sizeof(float)*size));
+	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_mapRx, sizeof(float)*size));
+	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_mapRy, sizeof(float)*size));
+	CUDA_CHECK_RETURN(cudaMemcpyAsync(d_mapLx, mapLx.data(), sizeof(float)*size, cudaMemcpyHostToDevice));
+	CUDA_CHECK_RETURN(cudaMemcpyAsync(d_mapLy, mapLy.data(), sizeof(float)*size, cudaMemcpyHostToDevice));
+	CUDA_CHECK_RETURN(cudaMemcpyAsync(d_mapRx, mapRx.data(), sizeof(float)*size, cudaMemcpyHostToDevice));
+	CUDA_CHECK_RETURN(cudaMemcpyAsync(d_mapRy, mapRy.data(), sizeof(float)*size, cudaMemcpyHostToDevice));
 }
 
 Mat2d<float> compute_depth_method(Mat2d<uint8_t> left, Mat2d<uint8_t> right) {
 	if (cols != left.cols() || rows != left.rows()) { throw std::runtime_error("input image size different from initiated"); }
-	if(first_alloc) {
-		if(memory_occupied) { free_memory(); }
-		first_alloc = false;
-		size = rows*cols;
-		size_cube_l = size*MAX_DISPARITY;
-		CUDA_CHECK_RETURN(cudaMalloc((void **)&d_transform0, sizeof(cost_t)*size));
-
-		CUDA_CHECK_RETURN(cudaMalloc((void **)&d_transform1, sizeof(cost_t)*size));
-
-		int size_cube = size*MAX_DISPARITY;
-		CUDA_CHECK_RETURN(cudaMalloc((void **)&d_cost, sizeof(uint8_t)*size_cube));
-
-		CUDA_CHECK_RETURN(cudaMalloc((void **)&d_im0, sizeof(uint8_t)*size));
-
-		CUDA_CHECK_RETURN(cudaMalloc((void **)&d_im1, sizeof(uint8_t)*size));
-
-		CUDA_CHECK_RETURN(cudaMalloc((void **)&d_L0, sizeof(uint8_t)*size_cube_l));
-		CUDA_CHECK_RETURN(cudaMalloc((void **)&d_L1, sizeof(uint8_t)*size_cube_l));
-		CUDA_CHECK_RETURN(cudaMalloc((void **)&d_L2, sizeof(uint8_t)*size_cube_l));
-		CUDA_CHECK_RETURN(cudaMalloc((void **)&d_L3, sizeof(uint8_t)*size_cube_l));
-#if PATH_AGGREGATION == 8
-		CUDA_CHECK_RETURN(cudaMalloc((void **)&d_L4, sizeof(uint8_t)*size_cube_l));
-		CUDA_CHECK_RETURN(cudaMalloc((void **)&d_L5, sizeof(uint8_t)*size_cube_l));
-		CUDA_CHECK_RETURN(cudaMalloc((void **)&d_L6, sizeof(uint8_t)*size_cube_l));
-		CUDA_CHECK_RETURN(cudaMalloc((void **)&d_L7, sizeof(uint8_t)*size_cube_l));
-#endif
-
-		CUDA_CHECK_RETURN(cudaMalloc((void **)&d_disparity, sizeof(uint8_t)*size));
-		CUDA_CHECK_RETURN(cudaMalloc((void **)&d_disparity_filtered_uchar, sizeof(uint8_t)*size));
-		CUDA_CHECK_RETURN(cudaMalloc((void **)&d_depth, sizeof(float)*size));
-
-		memory_occupied = true;
-	}
 	h_depth = new float[size]; // Reset pointer to avoid changing previous result since pybind takes this pointer directly
 
-	CUDA_CHECK_RETURN(cudaMemcpyAsync(d_im0, left.data(), sizeof(uint8_t)*size, cudaMemcpyHostToDevice, stream1));
-	CUDA_CHECK_RETURN(cudaMemcpyAsync(d_im1, right.data(), sizeof(uint8_t)*size, cudaMemcpyHostToDevice, stream1));
+	if (rectified) {
+		CUDA_CHECK_RETURN(cudaMemcpyAsync(d_im0, left.data(), sizeof(uint8_t)*size, cudaMemcpyHostToDevice));
+		CUDA_CHECK_RETURN(cudaMemcpyAsync(d_im1, right.data(), sizeof(uint8_t)*size, cudaMemcpyHostToDevice));
+	} else {
+		CUDA_CHECK_RETURN(cudaMemcpyAsync(d_rawim0, left.data(), sizeof(uint8_t)*size, cudaMemcpyHostToDevice));
+		CUDA_CHECK_RETURN(cudaMemcpyAsync(d_rawim1, right.data(), sizeof(uint8_t)*size, cudaMemcpyHostToDevice));
+		dim3 bs;
+		bs.x = 32*32;
+		dim3 gs;
+		gs.x = (size+bs.x-1) / bs.x;
+		CUDA_CHECK_RETURN(cudaDeviceSynchronize());
+		remap<<<gs, bs, 0, stream1>>>(d_mapLx, d_mapLy, rows, cols, d_rawim0, d_im0);
+		remap<<<gs, bs, 0, stream2>>>(d_mapRx, d_mapRy, rows, cols, d_rawim1, d_im1);
+	}
 
-	dim3 block_size;
-	block_size.x = 32;
-	block_size.y = 32;
-
-	dim3 grid_size;
-	grid_size.x = (cols+block_size.x-1) / block_size.x;
-	grid_size.y = (rows+block_size.y-1) / block_size.y;
-
-	CenterSymmetricCensusKernelSM2<<<grid_size, block_size, 0, stream1>>>(d_im0, d_im1, d_transform0, d_transform1, rows, cols);
+	dim3 bs2;
+	bs2.x = 32;
+	bs2.y = 32;
+	dim3 gs2;
+	gs2.x = (cols+bs2.x-1) / bs2.x;
+	gs2.y = (rows+bs2.y-1) / bs2.y;
+	CUDA_CHECK_RETURN(cudaDeviceSynchronize());
+	CenterSymmetricCensusKernelSM2<<<gs2, bs2, 0, stream1>>>(d_im0, d_im1, d_transform0, d_transform1, rows, cols);
 	cudaError_t err = cudaGetLastError();
 	if (err != cudaSuccess) {
 		printf("Error: %s %d\n", cudaGetErrorString(err), err);
@@ -119,7 +147,7 @@ Mat2d<float> compute_depth_method(Mat2d<uint8_t> left, Mat2d<uint8_t> right) {
 	}
 
 	// Hamming distance
-	CUDA_CHECK_RETURN(cudaStreamSynchronize(stream1));
+	CUDA_CHECK_RETURN(cudaDeviceSynchronize());
 	HammingDistanceCostKernel<<<rows, MAX_DISPARITY, 0, stream1>>>(d_transform0, d_transform1, d_cost, rows, cols);
 	err = cudaGetLastError();
 	if (err != cudaSuccess) {
@@ -131,26 +159,26 @@ Mat2d<float> compute_depth_method(Mat2d<uint8_t> left, Mat2d<uint8_t> right) {
 	const int PIXELS_PER_BLOCK = COSTAGG_BLOCKSIZE/WARP_SIZE;
 	const int PIXELS_PER_BLOCK_HORIZ = COSTAGG_BLOCKSIZE_HORIZ/WARP_SIZE;
 
-	CostAggregationKernelLeftToRight<<<(rows+PIXELS_PER_BLOCK_HORIZ-1)/PIXELS_PER_BLOCK_HORIZ, COSTAGG_BLOCKSIZE_HORIZ, 0, stream2>>>(d_cost, d_L0, p1, p2, rows, cols, d_transform0, d_transform1, d_disparity, d_L0, d_L1, d_L2, d_L3, d_L4, d_L5, d_L6);
+	CostAggregationKernelLeftToRight<<<(rows+PIXELS_PER_BLOCK_HORIZ-1)/PIXELS_PER_BLOCK_HORIZ, COSTAGG_BLOCKSIZE_HORIZ, 0, stream1>>>(d_cost, d_L0, p1, p2, rows, cols, d_transform0, d_transform1, d_disparity, d_L0, d_L1, d_L2, d_L3, d_L4, d_L5, d_L6);
 	err = cudaGetLastError();
 	if (err != cudaSuccess) {
 		printf("Error: %s %d\n", cudaGetErrorString(err), err);
 		exit(-1);
 	}
-	CostAggregationKernelRightToLeft<<<(rows+PIXELS_PER_BLOCK_HORIZ-1)/PIXELS_PER_BLOCK_HORIZ, COSTAGG_BLOCKSIZE_HORIZ, 0, stream3>>>(d_cost, d_L1, p1, p2, rows, cols, d_transform0, d_transform1, d_disparity, d_L0, d_L1, d_L2, d_L3, d_L4, d_L5, d_L6);
+	CostAggregationKernelRightToLeft<<<(rows+PIXELS_PER_BLOCK_HORIZ-1)/PIXELS_PER_BLOCK_HORIZ, COSTAGG_BLOCKSIZE_HORIZ, 0, stream2>>>(d_cost, d_L1, p1, p2, rows, cols, d_transform0, d_transform1, d_disparity, d_L0, d_L1, d_L2, d_L3, d_L4, d_L5, d_L6);
 	err = cudaGetLastError();
 	if (err != cudaSuccess) {
 		printf("Error: %s %d\n", cudaGetErrorString(err), err);
 		exit(-1);
 	}
-	CostAggregationKernelUpToDown<<<(cols+PIXELS_PER_BLOCK-1)/PIXELS_PER_BLOCK, COSTAGG_BLOCKSIZE, 0, stream1>>>(d_cost, d_L2, p1, p2, rows, cols, d_transform0, d_transform1, d_disparity, d_L0, d_L1, d_L2, d_L3, d_L4, d_L5, d_L6);
+	CostAggregationKernelUpToDown<<<(cols+PIXELS_PER_BLOCK-1)/PIXELS_PER_BLOCK, COSTAGG_BLOCKSIZE, 0, stream3>>>(d_cost, d_L2, p1, p2, rows, cols, d_transform0, d_transform1, d_disparity, d_L0, d_L1, d_L2, d_L3, d_L4, d_L5, d_L6);
 	err = cudaGetLastError();
 	if (err != cudaSuccess) {
 		printf("Error: %s %d\n", cudaGetErrorString(err), err);
 		exit(-1);
 	}
-	CUDA_CHECK_RETURN(cudaDeviceSynchronize());
-	CostAggregationKernelDownToUp<<<(cols+PIXELS_PER_BLOCK-1)/PIXELS_PER_BLOCK, COSTAGG_BLOCKSIZE, 0, stream1>>>(d_cost, d_L3, p1, p2, rows, cols, d_transform0, d_transform1, d_disparity, d_L0, d_L1, d_L2, d_L3, d_L4, d_L5, d_L6);
+	// CUDA_CHECK_RETURN(cudaDeviceSynchronize());
+	CostAggregationKernelDownToUp<<<(cols+PIXELS_PER_BLOCK-1)/PIXELS_PER_BLOCK, COSTAGG_BLOCKSIZE, 0, stream4>>>(d_cost, d_L3, p1, p2, rows, cols, d_transform0, d_transform1, d_disparity, d_L0, d_L1, d_L2, d_L3, d_L4, d_L5, d_L6);
 	err = cudaGetLastError();
 	if (err != cudaSuccess) {
 		printf("Error: %s %d\n", cudaGetErrorString(err), err);
@@ -184,6 +212,7 @@ Mat2d<float> compute_depth_method(Mat2d<uint8_t> left, Mat2d<uint8_t> right) {
 		exit(-1);
 	}
 #endif
+	CUDA_CHECK_RETURN(cudaDeviceSynchronize());
 	MedianFilter3x3<<<(size+MAX_DISPARITY-1)/MAX_DISPARITY, MAX_DISPARITY, 0, stream1>>>(d_disparity, d_disparity_filtered_uchar, rows, cols);
 	err = cudaGetLastError();
 	if (err != cudaSuccess) {
@@ -191,16 +220,13 @@ Mat2d<float> compute_depth_method(Mat2d<uint8_t> left, Mat2d<uint8_t> right) {
 		exit(-1);
 	}
 
-	CUDA_CHECK_RETURN(cudaDeviceSynchronize());
-
 	// Disparity to depth conversion
-	dim3 bs2;
-	bs2.x = 32*32;
-
-	dim3 gs2;
-	gs2.x = (size+bs2.x-1) / bs2.x;
-
-	disp2Depth<<<gs2, bs2, 0, stream1>>>(d_disparity_filtered_uchar, d_depth, focalLen, baselineLen, minDepth, maxDepth);
+	dim3 bs3;
+	bs3.x = 32*32;
+	dim3 gs3;
+	gs3.x = (size+bs3.x-1) / bs3.x;
+	CUDA_CHECK_RETURN(cudaDeviceSynchronize());
+	disp2Depth<<<gs3, bs3, 0, stream1>>>(d_disparity_filtered_uchar, d_depth, focalLen, baselineLen, minDepth, maxDepth);
 	CUDA_CHECK_RETURN(cudaMemcpy(h_depth, d_depth, sizeof(float)*size, cudaMemcpyDeviceToHost));
 
 	Mat2d<float> depth(rows, cols, h_depth);
@@ -208,6 +234,10 @@ Mat2d<float> compute_depth_method(Mat2d<uint8_t> left, Mat2d<uint8_t> right) {
 }
 
 static void free_memory() {
+	if (!rectified) {
+		CUDA_CHECK_RETURN(cudaFree(d_rawim0));
+		CUDA_CHECK_RETURN(cudaFree(d_rawim1));
+	}
 	CUDA_CHECK_RETURN(cudaFree(d_im0));
 	CUDA_CHECK_RETURN(cudaFree(d_im1));
 	CUDA_CHECK_RETURN(cudaFree(d_transform0));
@@ -225,14 +255,17 @@ static void free_memory() {
 	CUDA_CHECK_RETURN(cudaFree(d_disparity));
 	CUDA_CHECK_RETURN(cudaFree(d_disparity_filtered_uchar));
 	CUDA_CHECK_RETURN(cudaFree(d_cost));
+	CUDA_CHECK_RETURN(cudaFree(d_mapLx));
+	CUDA_CHECK_RETURN(cudaFree(d_mapLy));
+	CUDA_CHECK_RETURN(cudaFree(d_mapRx));
+	CUDA_CHECK_RETURN(cudaFree(d_mapRy));
 	memory_occupied = false;
 }
 
 void finish_depth_method() {
-	if(!first_alloc) {
-		free_memory();
-		CUDA_CHECK_RETURN(cudaStreamDestroy(stream1));
-		CUDA_CHECK_RETURN(cudaStreamDestroy(stream2));
-		CUDA_CHECK_RETURN(cudaStreamDestroy(stream3));
-	}
+	free_memory();
+	CUDA_CHECK_RETURN(cudaStreamDestroy(stream1));
+	CUDA_CHECK_RETURN(cudaStreamDestroy(stream2));
+	CUDA_CHECK_RETURN(cudaStreamDestroy(stream3));
+	CUDA_CHECK_RETURN(cudaStreamDestroy(stream4));
 }
