@@ -18,10 +18,16 @@ void remap(const float *mapx, const float *mapy,
     bool ydone = false;
     if (sx - round(sx) <= 0.01 || sx - round(sx) <= -0.01) {
         x = round(sx);
+        if (x < 0 || x >= cols) {
+            x = 0;
+        }
         xdone = true;
     }
     if (sy - round(sy) <= 0.01 || sy - round(sy) <= -0.01) {
         y = round(sy);
+        if (y < 0 || y >= rows) {
+            y = 0;
+        }
         ydone = true;
     }
 
@@ -32,12 +38,12 @@ void remap(const float *mapx, const float *mapy,
         int y1 = floor(sy);
         int y2 = floor(sy)+1;
         uint8_t I1, I2;
-        if (y1 < 0 || y1 >= cols) {
+        if (y1 < 0 || y1 >= rows) {
             I1 = 0;
         } else {
             I1 = src[y1*cols + x];
         }
-        if (y2 < 0 || y2 >= cols) {
+        if (y2 < 0 || y2 >= rows) {
             I2 = 0;
         } else {
             I2 = src[y2*cols + x];
@@ -47,7 +53,7 @@ void remap(const float *mapx, const float *mapy,
         int x1 = floor(sx);
         int x2 = floor(sx)+1;
         uint8_t I1, I2;
-        if (x1 < 0 || x1 >= rows) {
+        if (x1 < 0 || x1 >= cols) {
             I1 = 0;
         } else {
             I1 = src[y*cols + x1];
@@ -64,22 +70,22 @@ void remap(const float *mapx, const float *mapy,
         int y1 = floor(sy);
         int y2 = floor(sy)+1;
         uint8_t I11, I12, I21, I22;
-        if (x1 < 0 || x1 >= rows || y1 < 0 || y1 >= cols) {
+        if (x1 < 0 || x1 >= cols || y1 < 0 || y1 >= rows) {
             I11 = 0;
         } else {
             I11 = src[y1*cols + x1];
         }
-        if (x1 < 0 || x1 >= rows || y2 < 0 || y2 >= cols) {
+        if (x1 < 0 || x1 >= cols || y2 < 0 || y2 >= rows) {
             I12 = 0;
         } else {
             I12 = src[y2*cols + x1];
         }
-        if (x2 < 0 || x2 >= rows || y1 < 0 || y1 >= cols) {
+        if (x2 < 0 || x2 >= cols || y1 < 0 || y1 >= rows) {
             I21 = 0;
         } else {
             I21 = src[y1*cols + x2];
         }
-        if (x2 < 0 || x2 >= rows || y2 < 0 || y2 >= cols) {
+        if (x2 < 0 || x2 >= cols || y2 < 0 || y2 >= rows) {
             I22 = 0;
         } else {
             I22 = src[y2*cols + x2];

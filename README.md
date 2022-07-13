@@ -52,6 +52,6 @@ Run `test.py` to evaluate the runtime and result. The input is in folder `test_i
 ### Right Image
 ![right](test_images/right.png)
 
-Tested on RTX 3060, 100 calls of `dpcuda.DepthEngine.compute(img_l, img_r)` takes ~0.57 second witt rectification. The generated depth map is as follow:
+Tested on RTX 3060, 100 calls of `dpcuda.DepthEngine.compute(img_l, img_r)` takes ~0.57 second with rectification. The generated depth map is as follow:
 
 ![depth](test_images/result.png)
