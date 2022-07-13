@@ -21,26 +21,15 @@ l2r = np.array([
 ])
 r2l = np.linalg.inv(l2r)
 
-depthEngine = DepthEngine(img_h, img_w, k_l, k_r, r2l, min_depth=0.2, max_depth=10.0, rectified=False)
-
-# for i in range(10):
-#     depth = depthEngine.compute(left, right)
-#     depth = depth[:, 200:]
-#     if i == 0:
-#         prev = depth
-#     else:
-#         print(np.array_equal(prev, depth))
-#         prev = depth
-
+depthEngine = DepthEngine(img_h, img_w, k_l, k_r, r2l, min_depth=0.2, max_depth=10.0, rectified=True)
 depth1 = depthEngine.compute(left, right)
 depth1 = depth1[:, 200:]
+
+depthEngine = DepthEngine(img_h, img_w, k_l, k_r, r2l, min_depth=0.2, max_depth=10.0, rectified=False)
 depth2 = depthEngine.compute(left, right)
 depth2 = depth2[:, 200:]
-depth3 = depthEngine.compute(left, right)
-depth3 = depth3[:, 200:]
-print(np.array_equal(depth1, depth2))
 
-plt.imsave("depth1.png", depth1)
-plt.imsave("depth2.png", depth2)
+if np.array_equal(depth1, depth2):
+    print("pass!")
 
 depthEngine.close()
