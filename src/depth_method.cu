@@ -117,7 +117,7 @@ void init_depth_method(const uint8_t _p1, const uint8_t _p2, uint32_t _cols, uin
 }
 
 Mat2d<float> compute_depth_method(Mat2d<uint8_t> left, Mat2d<uint8_t> right) {
-	if (cols != left.cols() || rows != left.rows()) { throw std::runtime_error("input image size different from initiated"); }
+	if (cols != left.cols() || rows != left.rows()) { throw std::runtime_error("Input image size different from initiated"); }
 	h_depth = new float[size]; // Reset pointer to avoid changing previous result since pybind takes this pointer directly
 
 	if (rectified) {
@@ -153,7 +153,7 @@ Mat2d<float> compute_depth_method(Mat2d<uint8_t> left, Mat2d<uint8_t> right) {
 	}
 
 	// Hamming distance
-	CUDA_CHECK_RETURN(cudaStreamSynchronize(stream1));
+	CUDA_CHECK_RETURN(cudaDeviceSynchronize());
 	HammingDistanceCostKernel<<<rows, MAX_DISPARITY, 0, stream1>>>(d_transform0, d_transform1, d_cost, rows, cols);
 	err = cudaGetLastError();
 	if (err != cudaSuccess) {

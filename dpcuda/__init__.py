@@ -33,8 +33,8 @@ class DepthEngine:
 
         if not isinstance(census_width, int) or not isinstance(census_height, int) or \
                 census_width % 2 == 0 or census_height % 2 == 0 or \
-                census_width >= 256 or census_height >= 256:
-            raise TypeError("Census width/height must be odd integer less than 256")
+                census_width*census_height > 65:
+            raise TypeError("Census width/height must be odd integers, and their product should be no larger than 65")
 
         r1, r2, p1, p2, q, _, _ = cv2.stereoRectify(
         R=r2l[:3, :3], T=r2l[:3, 3:],
