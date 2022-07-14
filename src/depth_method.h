@@ -50,8 +50,8 @@ private:
 
 void init_depth_method(const uint8_t _p1, const uint8_t _p2, uint32_t _cols, uint32_t _rows,
                         float _focalLen, float _baselineLen, float _minDepth, float _maxDepth,
-                        Mat2d<float> mapLx, Mat2d<float> mapLy, Mat2d<float> mapRx, Mat2d<float> mapRy,
-                        bool rectified);
+                        Mat2d<float> mapLx, Mat2d<float> mapLy, Mat2d<float> mapRx, Mat2d<float> mapRy, bool rectified,
+                        uint8_t _censusWidth, uint8_t _censusHeight);
 Mat2d<float> compute_depth_method(Mat2d<uint8_t> left, Mat2d<uint8_t> right);
 void finish_depth_method();
 static void free_memory();
