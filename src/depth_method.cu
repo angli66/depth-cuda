@@ -45,8 +45,9 @@ static uint8_t *d_L7;
 static uint8_t p1, p2;
 static bool memory_occupied;
 static uint32_t cols, rows, size, size_cube_l;
-static bool rectified;
 static float focalLen, baselineLen, minDepth, maxDepth;
+static bool rectified;
+static uint8_t censusWidth, censusHeight;
 static float *d_mapLx;
 static float *d_mapLy;
 static float *d_mapRx;
@@ -54,8 +55,8 @@ static float *d_mapRy;
 
 void init_depth_method(const uint8_t _p1, const uint8_t _p2, uint32_t _cols, uint32_t _rows,
 						float _focalLen, float _baselineLen, float _minDepth, float _maxDepth,
-						Mat2d<float> mapLx, Mat2d<float> mapLy, Mat2d<float> mapRx, Mat2d<float> mapRy,
-						bool _rectified) {
+						Mat2d<float> mapLx, Mat2d<float> mapLy, Mat2d<float> mapRx, Mat2d<float> mapRy, bool _rectified,
+						uint8_t _censusWidth, uint8_t _censusHeight) {
 	// Create streams and free memory if necessary
 	CUDA_CHECK_RETURN(cudaStreamCreate(&stream1));
 	CUDA_CHECK_RETURN(cudaStreamCreate(&stream2));
@@ -72,6 +73,8 @@ void init_depth_method(const uint8_t _p1, const uint8_t _p2, uint32_t _cols, uin
 	minDepth = _minDepth;
 	maxDepth = _maxDepth;
 	rectified = _rectified;
+	censusWidth = _censusWidth;
+	censusHeight = _censusHeight;
 
 	size = rows*cols;
 	size_cube_l = size*MAX_DISPARITY;
@@ -138,8 +141,11 @@ Mat2d<float> compute_depth_method(Mat2d<uint8_t> left, Mat2d<uint8_t> right) {
 	dim3 gs2;
 	gs2.x = (cols+bs2.x-1) / bs2.x;
 	gs2.y = (rows+bs2.y-1) / bs2.y;
+	const unsigned int win_cols = (31+censusWidth);
+	const unsigned int win_rows = (31+censusHeight);
+	const unsigned int shared_mem_size = 2 * win_cols * win_rows * sizeof(uint8_t);
 	CUDA_CHECK_RETURN(cudaDeviceSynchronize());
-	CenterSymmetricCensusKernelSM2<<<gs2, bs2, 0, stream1>>>(d_im0, d_im1, d_transform0, d_transform1, rows, cols);
+	CenterSymmetricCensusKernelSM2<<<gs2, bs2, shared_mem_size, stream1>>>(d_im0, d_im1, d_transform0, d_transform1, rows, cols, censusWidth, censusHeight);
 	cudaError_t err = cudaGetLastError();
 	if (err != cudaSuccess) {
 		printf("Error: %s %d\n", cudaGetErrorString(err), err);

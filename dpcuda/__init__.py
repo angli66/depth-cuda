@@ -7,8 +7,9 @@ import dpcuda.engine
 # NOTICE: this class is a wrapper for underlying cuda code. No matter how many instances are created, they
 # will point to the same cuda instance in memory
 class DepthEngine:
-    def __init__(self, img_h, img_w, k_l, k_r, r2l, min_depth, max_depth, dist_l=None, dist_r=None, rectified=False,
-                    p1_penalty=10, p2_penalty=120):
+    def __init__(self, img_h, img_w, k_l, k_r, r2l, min_depth, max_depth,
+                    dist_l=None, dist_r=None, rectified=False,
+                    p1_penalty=10, p2_penalty=120, census_width=9, census_height=7):
         """
         :param img_h: Image height, greater than 32
         :param img_w: Image width, greater than 32
@@ -23,8 +24,14 @@ class DepthEngine:
         :param p1_penalty: p1 penalty for semi-global matching, must be integer less than 256
         :param p2_penalty: p2 penalty for semi-global matching, must be integer less than 256
         """
-        if not isinstance(p1_penalty, int) or not isinstance(p2_penalty, int) or p1_penalty >= 256 or p2_penalty >= 256:
+        if not isinstance(p1_penalty, int) or not isinstance(p2_penalty, int) or \
+                p1_penalty >= 256 or p2_penalty >= 256:
             raise TypeError("p1/p2 penalty must be 8 bit unsigned integer")
+
+        if not isinstance(census_width, int) or not isinstance(census_height, int) or \
+                census_width % 2 == 0 or census_height % 2 == 0 or \
+                census_width >= 256 or census_height >= 256:
+            raise TypeError("census width/height must be odd integer less than 256")
 
         r1, r2, p1, p2, q, _, _ = cv2.stereoRectify(
         R=r2l[:3, :3], T=r2l[:3, 3:],
@@ -41,7 +48,7 @@ class DepthEngine:
 
         dpcuda.engine.init(img_h, img_w, f_len, b_len, min_depth, max_depth,
                             map_lx, map_ly, map_rx, map_ry, rectified,
-                            p1_penalty, p2_penalty)
+                            p1_penalty, p2_penalty, census_width, census_height)
 
     def compute(self, img_l, img_r):
         """
