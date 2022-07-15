@@ -23,6 +23,8 @@ class DepthEngine:
         :param rectified: Whether the input has already been rectified
         :param p1_penalty: p1 penalty for semi-global matching, must be integer less than 256
         :param p2_penalty: p2 penalty for semi-global matching, must be integer less than 256
+        :param census_width: width of the census transform window, census_width*census_height <= 65
+        :param census_height: height of the census transform window, census_height*census_height <= 65
         """
         if img_h % 4 != 0 or img_w % 4 != 0:
             raise TypeError("Image height and width must be divisible by 4")

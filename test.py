@@ -35,3 +35,5 @@ depthEngine.close()
 
 plt.imshow(depth)
 plt.show()
+
+plt.imsave("result.png", depth)
