@@ -23,6 +23,8 @@ class DepthEngine:
         :param rectified: Whether the input has already been rectified
         :param p1_penalty: p1 penalty for semi-global matching, must be integer less than 256
         :param p2_penalty: p2 penalty for semi-global matching, must be integer less than 256
+        :param census_width: width of the census transform window, census_width*census_height <= 65
+        :param census_height: height of the census transform window, census_height*census_height <= 65
         """
         if img_h % 4 != 0 or img_w % 4 != 0:
             raise TypeError("Image height and width must be divisible by 4")
@@ -33,8 +35,8 @@ class DepthEngine:
 
         if not isinstance(census_width, int) or not isinstance(census_height, int) or \
                 census_width % 2 == 0 or census_height % 2 == 0 or \
-                census_width >= 256 or census_height >= 256:
-            raise TypeError("Census width/height must be odd integer less than 256")
+                census_width*census_height > 65:
+            raise TypeError("Census width/height must be odd integers, and their product should be no larger than 65")
 
         r1, r2, p1, p2, q, _, _ = cv2.stereoRectify(
         R=r2l[:3, :3], T=r2l[:3, 3:],

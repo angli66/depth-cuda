@@ -44,7 +44,7 @@ static uint8_t *d_L6;
 static uint8_t *d_L7;
 static uint8_t p1, p2;
 static bool memory_occupied;
-static uint32_t cols, rows, size, size_cube_l;
+static uint64_t cols, rows, size;
 static float focalLen, baselineLen, minDepth, maxDepth;
 static bool rectified;
 static uint8_t censusWidth, censusHeight;
@@ -77,7 +77,6 @@ void init_depth_method(const uint8_t _p1, const uint8_t _p2, uint32_t _cols, uin
 	censusHeight = _censusHeight;
 
 	size = rows*cols;
-	size_cube_l = size*MAX_DISPARITY;
 	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_transform0, sizeof(cost_t)*size));
 	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_transform1, sizeof(cost_t)*size));
 	int size_cube = size*MAX_DISPARITY;
@@ -88,15 +87,15 @@ void init_depth_method(const uint8_t _p1, const uint8_t _p2, uint32_t _cols, uin
 	}
 	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_im0, sizeof(uint8_t)*size));
 	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_im1, sizeof(uint8_t)*size));
-	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_L0, sizeof(uint8_t)*size_cube_l));
-	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_L1, sizeof(uint8_t)*size_cube_l));
-	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_L2, sizeof(uint8_t)*size_cube_l));
-	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_L3, sizeof(uint8_t)*size_cube_l));
+	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_L0, sizeof(uint8_t)*size_cube));
+	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_L1, sizeof(uint8_t)*size_cube));
+	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_L2, sizeof(uint8_t)*size_cube));
+	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_L3, sizeof(uint8_t)*size_cube));
 #if PATH_AGGREGATION == 8
-	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_L4, sizeof(uint8_t)*size_cube_l));
-	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_L5, sizeof(uint8_t)*size_cube_l));
-	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_L6, sizeof(uint8_t)*size_cube_l));
-	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_L7, sizeof(uint8_t)*size_cube_l));
+	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_L4, sizeof(uint8_t)*size_cube));
+	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_L5, sizeof(uint8_t)*size_cube));
+	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_L6, sizeof(uint8_t)*size_cube));
+	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_L7, sizeof(uint8_t)*size_cube));
 #endif
 	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_disparity, sizeof(uint8_t)*size));
 	CUDA_CHECK_RETURN(cudaMalloc((void **)&d_disparity_filtered_uchar, sizeof(uint8_t)*size));
@@ -117,7 +116,7 @@ void init_depth_method(const uint8_t _p1, const uint8_t _p2, uint32_t _cols, uin
 }
 
 Mat2d<float> compute_depth_method(Mat2d<uint8_t> left, Mat2d<uint8_t> right) {
-	if (cols != left.cols() || rows != left.rows()) { throw std::runtime_error("input image size different from initiated"); }
+	if (cols != left.cols() || rows != left.rows()) { throw std::runtime_error("Input image size different from initiated"); }
 	h_depth = new float[size]; // Reset pointer to avoid changing previous result since pybind takes this pointer directly
 
 	if (rectified) {
@@ -153,7 +152,7 @@ Mat2d<float> compute_depth_method(Mat2d<uint8_t> left, Mat2d<uint8_t> right) {
 	}
 
 	// Hamming distance
-	CUDA_CHECK_RETURN(cudaStreamSynchronize(stream1));
+	CUDA_CHECK_RETURN(cudaDeviceSynchronize());
 	HammingDistanceCostKernel<<<rows, MAX_DISPARITY, 0, stream1>>>(d_transform0, d_transform1, d_cost, rows, cols);
 	err = cudaGetLastError();
 	if (err != cudaSuccess) {

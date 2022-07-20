@@ -15,7 +15,10 @@ The pipeline is accelerated for a stream of photos captured by consistent camera
 
 ## Build
 
-To build the code, run `build.sh` under root directory. The default settings only support NVIDIA GPU with compute capability of 7.5, 8.0 and 8.6. To accustom different GPUs, check the compute capability at https://developer.nvidia.com/cuda-gpus and add the value into `src/CMakeLists.txt`. For example, if your GPU's compute capability is of 7.0, then add 
+CMake need to be installed. Before building the code, run
+
+    git submodule update --init
+to get 3rd party library. To build the code, run `build.sh` under root directory. The default settings only support NVIDIA GPU with compute capability of 7.5, 8.0 and 8.6. To accustom different GPUs, check the compute capability at https://developer.nvidia.com/cuda-gpus and add the value into `src/CMakeLists.txt`. For example, if your GPU's compute capability is of 7.0, then add 
 
     -gencode=arch=compute_70,code=sm_70
 into `CmakeLists.txt`. After building, the `dpcuda` folder can be imported as a python package.

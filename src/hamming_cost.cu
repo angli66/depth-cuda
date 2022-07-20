@@ -15,12 +15,10 @@
 
     You should have received a copy of the GNU General Public License
     along with sgm.  If not, see <http://www.gnu.org/licenses/>.
-
 **/
 
 #include "hamming_cost.h"
 
-//d_transform0, d_transform1, d_cost, rows, cols
 __global__ void
 HammingDistanceCostKernel (  const cost_t *d_transform0, const cost_t *d_transform1,
 		uint8_t *d_cost, const int rows, const int cols ) {
