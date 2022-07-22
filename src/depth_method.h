@@ -30,6 +30,7 @@
 #include "hamming_cost.h"
 #include "median_filter.h"
 #include "cost_aggregation.h"
+#include "cost_aggregation_general.h"
 #include "camera.h"
 
 template <class T>
