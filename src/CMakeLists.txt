@@ -26,7 +26,7 @@ link_directories(
 )
 
 cuda_add_library(engine SHARED
-  engine.cu costs.cu hamming_cost.cu median_filter.cu camera.cu depth_method.cu
+  engine.cu costs.cu hamming_cost.cu cost_aggregation_general.cu median_filter.cu camera.cu depth_method.cu
 )
 
 target_link_libraries(engine

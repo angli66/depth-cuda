@@ -176,12 +176,25 @@ Mat2d<float> compute_depth_method(Mat2d<uint8_t> left, Mat2d<uint8_t> right) {
 		printf("Error: %s %d\n", cudaGetErrorString(err), err);
 		exit(-1);
 	}
-	CostAggregationKernelUpToDown<<<(cols+PIXELS_PER_BLOCK-1)/PIXELS_PER_BLOCK, COSTAGG_BLOCKSIZE, 0, stream1>>>(d_cost, d_L2, p1, p2, rows, cols, d_transform0, d_transform1, d_disparity, d_L0, d_L1, d_L2, d_L3, d_L4, d_L5, d_L6);
+
+	// CostAggregationKernelUpToDown<<<(cols+PIXELS_PER_BLOCK-1)/PIXELS_PER_BLOCK, COSTAGG_BLOCKSIZE, 0, stream1>>>(d_cost, d_L2, p1, p2, rows, cols, d_transform0, d_transform1, d_disparity, d_L0, d_L1, d_L2, d_L3, d_L4, d_L5, d_L6);
+	// err = cudaGetLastError();
+	// if (err != cudaSuccess) {
+	// 	printf("Error: %s %d\n", cudaGetErrorString(err), err);
+	// 	exit(-1);
+	// }
+
+	// Testing CostAggregationGeneral
+	CUDA_CHECK_RETURN(cudaDeviceSynchronize());
+	const unsigned int maxDisp = 128;
+	const unsigned int shared_mem_size_2 = maxDisp * sizeof(int);
+	CostAggregationKernelUpToDownGeneral<<<cols, maxDisp, shared_mem_size_2, stream1>>>(d_cost, d_L2, p1, p2, rows, cols, maxDisp);
 	err = cudaGetLastError();
 	if (err != cudaSuccess) {
 		printf("Error: %s %d\n", cudaGetErrorString(err), err);
 		exit(-1);
 	}
+
 	CUDA_CHECK_RETURN(cudaDeviceSynchronize());
 	CostAggregationKernelDownToUp<<<(cols+PIXELS_PER_BLOCK-1)/PIXELS_PER_BLOCK, COSTAGG_BLOCKSIZE, 0, stream1>>>(d_cost, d_L3, p1, p2, rows, cols, d_transform0, d_transform1, d_disparity, d_L0, d_L1, d_L2, d_L3, d_L4, d_L5, d_L6);
 	err = cudaGetLastError();
