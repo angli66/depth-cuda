@@ -1,3 +1,4 @@
 .vscode/*
 dpcuda/__pycache__
+dpcuda/engine.so
 result.png

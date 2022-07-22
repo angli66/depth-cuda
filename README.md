@@ -37,6 +37,7 @@ Initiate the `DepthEngine` class.
 `dist_l`: Left distortion coefficients  
 `dist_r`: Right distortion coefficients  
 `rectified`: Whether the input has already been rectified. If already rectified the the runtime can be further reduced
+TODO: add instructions for remaining parameters
 
 ### `dpcuda.DepthEngine.compute(img_l, img_r)`
 Take two images and output the calculated depth map (in meters).
@@ -48,7 +49,7 @@ Take two images and output the calculated depth map (in meters).
 Free resources including memory allocated by cuda. This function should be called when the use of the module has ended. If not, memory leak in GPU might occur.
 
 ## Result
-Run `test.py` to evaluate the runtime and result. The input is in folder `test_images`， which are two 1280x720 images:
+Run `test.py` to evaluate the runtime and result. The input is in folder `test_images`， which are two 720x1280 images:
 ### Left Image
 ![left](test_images/left.png)
 
@@ -57,4 +58,4 @@ Run `test.py` to evaluate the runtime and result. The input is in folder `test_i
 
 Tested on RTX 3060, 100 calls of `dpcuda.DepthEngine.compute(img_l, img_r)` takes ~0.57 second with rectification. The generated depth map is as follow:
 
-![depth](test_images/result.png)
+![depth](test_images/example_result.png)

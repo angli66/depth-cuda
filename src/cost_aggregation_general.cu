@@ -24,20 +24,15 @@ void CostAggregationKernelUpToDownGeneral(uint8_t* d_cost, uint8_t *d_L,
     extern __shared__ int SharedAggr[]; // length of maxDisp
 
     // First iteration
-    int y = 0;
-    const uint8_t cost = d_cost[(y*cols+x)*maxDisp+d];
-
-    int aggr = cost;
-    d_L[(y*cols+x)*maxDisp+d] = aggr;
-
+    const uint8_t cost = d_cost[x*maxDisp+d];
+    d_L[x*maxDisp+d] = cost;
+    if (d == 0) { min = cost; }
     __syncthreads();
-    if (d == 0) { min = 255; }
-    __syncthreads();
-    atomicMin(&min, aggr);
-    SharedAggr[d] = aggr;
+    atomicMin(&min, cost);
+    SharedAggr[d] = cost;
 
     // Remaining iterations
-    for (y = 1; y < rows; y++) { // HxWxD, H position
+    for (int y = 1; y < rows; y++) { // HxWxD, H position
         const uint8_t cost = d_cost[(y*cols+x)*maxDisp+d];
         __syncthreads();
 
@@ -45,23 +40,23 @@ void CostAggregationKernelUpToDownGeneral(uint8_t* d_cost, uint8_t *d_L,
         if (d != 0) {
             left = SharedAggr[d-1];
         }
-        if (d != maxDisp) {
+        if (d != maxDisp-1) {
             right = SharedAggr[d+1];
         }
         
         int minimum;
-        if (d != 0 && d != maxDisp) {
-            minimum = find_minimum(aggr, left+P1, right+P1, min+P2);
+        if (d != 0 && d != maxDisp-1) {
+            minimum = find_minimum(SharedAggr[d], left+P1, right+P1, min+P2);
         } else if (d == 0) {
-            minimum = find_minimum(aggr, right+P1, right+P1, min+P2);
+            minimum = find_minimum(SharedAggr[d], right+P1, right+P1, min+P2);
         } else {
-            minimum = find_minimum(aggr, left+P1, left+P1, min+P2);
+            minimum = find_minimum(SharedAggr[d], left+P1, left+P1, min+P2);
         }
-        aggr = cost + minimum - min;
+        int aggr = cost + minimum - min;
         d_L[(y*cols+x)*maxDisp+d] = aggr;
 
         __syncthreads();
-        if (d == 0) { min = 255; }
+        if (d == 0) { min = aggr; }
         __syncthreads();
         atomicMin(&min, aggr);
         SharedAggr[d] = aggr;

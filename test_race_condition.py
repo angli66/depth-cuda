@@ -26,16 +26,20 @@ depthEngine = DepthEngine(img_h, img_w, k_l, k_r, r2l, 0.2, 10.0,
                             p1_penalty=10, p2_penalty=120,
                             census_width=9, census_height=7)
 
-
-depth1 = depthEngine.compute(left, right)
-depth2 = depthEngine.compute(left, right)
+correct = True
+for i in range(100):
+    depth1 = depthEngine.compute(left, right)
+    depth2 = depthEngine.compute(left, right)
+    if np.array_equal(depth1, depth2):
+        continue
+    else:
+        correct = False
+        print("fail!")
+        plt.imsave("result1.png", depth1)
+        plt.imsave("result2.png", depth2)
+        break
+    
+if correct:
+    print("pass!")
 
 depthEngine.close()
-
-plt.imsave("result1.png", depth1)
-plt.imsave("result2.png", depth2)
-
-if np.array_equal(depth1[:, 200:], depth2[:, 200:]):
-    print("pass!")
-else:
-    print("fail!")

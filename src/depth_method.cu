@@ -185,9 +185,9 @@ Mat2d<float> compute_depth_method(Mat2d<uint8_t> left, Mat2d<uint8_t> right) {
 	// }
 
 	// Testing CostAggregationGeneral
-	CUDA_CHECK_RETURN(cudaDeviceSynchronize());
 	const unsigned int maxDisp = 128;
 	const unsigned int shared_mem_size_2 = maxDisp * sizeof(int);
+	CUDA_CHECK_RETURN(cudaDeviceSynchronize());
 	CostAggregationKernelUpToDownGeneral<<<cols, maxDisp, shared_mem_size_2, stream1>>>(d_cost, d_L2, p1, p2, rows, cols, maxDisp);
 	err = cudaGetLastError();
 	if (err != cudaSuccess) {

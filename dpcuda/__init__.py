@@ -11,8 +11,8 @@ class DepthEngine:
                     dist_l=None, dist_r=None, rectified=False,
                     p1_penalty=10, p2_penalty=120, census_width=9, census_height=7):
         """
-        :param img_h: Image height, must be divisible by 4 and greater than 32
-        :param img_w: Image width, must be divisible by 4 and greater than 32
+        :param img_h: Image height, must be divisible by 4 and greater than or equal to 32
+        :param img_w: Image width, must be divisible by 4 and greater than or equal to 32
         :param k_l: Left intrinsic matrix
         :param k_r: Right intrinsic matrix
         :param r2l: Extrinsic matrix (right to left)
@@ -21,22 +21,22 @@ class DepthEngine:
         :param dist_l: Left distortion coefficients
         :param dist_r: Right distortion coefficients
         :param rectified: Whether the input has already been rectified
-        :param p1_penalty: p1 penalty for semi-global matching, must be integer less than 256
-        :param p2_penalty: p2 penalty for semi-global matching, must be integer less than 256
+        :param p1_penalty: p1 penalty for semi-global matching, must be integer less than p2_penalty
+        :param p2_penalty: p2 penalty for semi-global matching, must be integer less than 224
         :param census_width: width of the census transform window, census_width*census_height <= 65
         :param census_height: height of the census transform window, census_height*census_height <= 65
         """
-        if img_h % 4 != 0 or img_w % 4 != 0:
-            raise TypeError("Image height and width must be divisible by 4")
+        if not isinstance(img_h, int) or not isinstance(img_w, int) or \
+                img_h % 4 != 0 or img_w % 4 != 0 or img_h < 32 or img_w < 32:
+            raise TypeError("Image height and width must be integer divisible by 4 and no less than 32")
 
         if not isinstance(p1_penalty, int) or not isinstance(p2_penalty, int) or \
-                p1_penalty >= 256 or p2_penalty >= 256:
-            raise TypeError("p1/p2 penalty must be 8 bit unsigned integer")
+                p1_penalty >= p2_penalty or p2_penalty >= 224:
+            raise TypeError("p1 must be integer less than p2 and p2 be integer less than 224")
 
         if not isinstance(census_width, int) or not isinstance(census_height, int) or \
-                census_width % 2 == 0 or census_height % 2 == 0 or \
-                census_width*census_height > 65:
-            raise TypeError("Census width/height must be odd integers, and their product should be no larger than 65")
+                census_width % 2 == 0 or census_height % 2 == 0 or census_width*census_height > 65:
+            raise TypeError("Census width/height must be odd integers and their product should be no larger than 65")
 
         r1, r2, p1, p2, q, _, _ = cv2.stereoRectify(
         R=r2l[:3, :3], T=r2l[:3, 3:],
